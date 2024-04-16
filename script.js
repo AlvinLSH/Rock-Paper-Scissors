@@ -1,111 +1,78 @@
-// This is a function, getComputerChoice() to get the move used by the computer.
 function getComputerChoice() {
-
-// Declare variable rock, paper and scissors. Assign them from 1 to 3 respectively.
-    let rock = 1,
-        paper = 2,
-        scissors = 3;
-// Declare variable choice to store a random number between 1 to 3
-    let choice = Math.floor(Math.random() * 3) + 1;
-// if else statement to return respective move.
-    if (choice === rock) {
-        return 'Rock';
-    } else if (choice === paper) {
-        return 'Paper';
-    } else {
-        return 'Scissors';
-    }
+    let comp_move = ['Rock', 'Paper', 'Scissors']
+    return comp_move[Math.floor(Math.random() * 3)];
 }
 
-// Create a function, playRound() with two parameters playerSelection and computerSelection.
-function playRound(playerSelection, computerSelection) {
-        
-    // Change the first character to upperCase.
-    playerSelection = playerSelection.slice(0,1).toUpperCase() + playerSelection.slice(1);
-    
-    // if else statement which return win, tie or lose messages based on selected moves. 
-    
-    // Player Selection is Rock
-    if (playerSelection === 'Rock') {
-        if (computerSelection === 'Rock') {
-            console.log('Both of you tied!');
-        } else if (computerSelection === 'Paper') {
-            console.log(`You Lose! ${computerSelection} beats ${playerSelection}`);
-            return 'lose';
-        } else {
-            console.log(`You Win! ${playerSelection} beats ${computerSelection}`);
-            return 'win';
-        }
-        // Player Selection is Paper
-    } else if (playerSelection === 'Paper') {
-        if (computerSelection === 'Paper') {
-            console.log('Both of you tied!');
-        } else if (computerSelection === 'Scissors') {
-            console.log(`You Lose! ${computerSelection} beats ${playerSelection}`);
-            return 'lose';
-        } else {
-            console.log(`You Win! ${playerSelection} beats ${computerSelection}`);
-            return 'win';
-        }
-        // Player Selection is Scissors
-    } else {
-        if (computerSelection === 'Scissors') {
-            console.log('Both of you tied!');
-        } else if (computerSelection === 'Rock') {
-            console.log(`You Lose! ${computerSelection} beats ${playerSelection}`);
-            return 'lose';
-        } else {
-            console.log(`You Win! ${playerSelection} beats ${computerSelection}`);
-            return 'win';
-        }
-    }
-}
-
-
-
-// Create a function, playGame()
-function playGame() {
-
-// Declare variable counter, result and initialize them to 0
-    let counter = 0,
-        result,
-        win_count = 0,
-        lose_count = 0;
-    
-// 
-// Crete a variable called playerSelection to prompt player's move.
-// The string entered is case insensitive.
-    let playerSelection = null;
-
-// Declare variable computerSelection to store returned value from getComputerChoice()
-    let computerSelection = null;
-// Execute playRound for five times
-    while (counter < 5) {
-        // Prompt player to choose a move for each new round
-        playerSelection = prompt('Choose your move: ', '').toLowerCase();
-        // Invoke getComputerChoice for each new round
-        computerSelection = getComputerChoice();
-
-        // Execute playRound()
-        // Return result of that round 
-        result = playRound(playerSelection, computerSelection);
-
-        // Increment win count or lose count based on result
-        if (result === 'win') {
-            win_count++;
-        } else if (result === 'lose') {
-            lose_count++;
-        }
-
-        // Increment counter
+let counter = 1;
+const para = document.querySelector('.result');
+const btn = document.querySelectorAll("button");
+btn.forEach((button) => {
+    button.addEventListener('click', (e) => {
+        let result = playRound(e.target.className, getComputerChoice());
         counter++;
-    }
-//Return match result
-    if (win_count > lose_count) {
-        return 'You win! Congratulations';
-    } else if (win_count < lose_count) {
-        return 'You lost. Try again next time';
-    } else {
-        return 'It\'s a tie. No sweat';
+        displayResult(result);
+    });
+});
+
+
+function playRound(playerChoice, compChoice) {
+    playerChoice = playerChoice.slice(0,1).toUpperCase() + playerChoice.slice(1);
+    console.log(`player: ${playerChoice}, comp: ${compChoice}`);
+    
+    if ((playerChoice === 'Rock' && compChoice === 'Rock') || 
+        (playerChoice === 'Paper' && compChoice === 'Paper') ||
+        (playerChoice === 'Scissors' && compChoice === 'Scissors')) {
+            para.textContent = `Round ${counter}: Both of you tied`;
+            return 'tied';
+    } 
+    else if ((playerChoice === 'Rock' && compChoice === 'Scissors') ||
+                (playerChoice === 'Paper' && compChoice === 'Rock') ||
+                (playerChoice === 'Scissors' && compChoice === 'Rock')) {
+                    para.textContent = `Round ${counter}: Player wins this round`;
+                    return 'win'
+    } 
+    else {
+        para.textContent = `Round ${counter}: Computer wins this round`;
+        return 'lost';
     }
 }
+
+const div = document.querySelector('div');
+const playerScore = document.createElement('p');
+const compScore = document.createElement('p');
+playerScore.textContent = 'Player Score: 0';
+compScore.textContent = 'Computer Score: 0';
+div.appendChild(playerScore);
+div.appendChild(compScore);
+
+function displayResult(result) {
+    let pscore = parseInt(playerScore.textContent.slice(-1));
+    let cscore = parseInt(compScore.textContent.slice(-1));
+    switch (result) {
+        case 'win':
+            pscore++;
+            playerScore.textContent = `${playerScore.textContent.slice(0,-1)} ${pscore}`;
+            break;
+        case 'lost':
+            cscore++;
+            compScore.textContent = `${compScore.textContent.slice(0,-1)} ${cscore}`;
+            break;
+    }
+    if (pscore === 5 || cscore === 5) announceWinner(pscore, cscore); 
+}
+
+function announceWinner(pScore, cScore) {
+    if (pScore > cScore) {
+        alert('Player Wins!');
+    } else alert ('Computer Wins!');
+
+    playerScore.textContent = 'Player Score: 0';
+    compScore.textContent = 'Computer Score: 0';
+    para.textContent = '';
+    counter = 1;
+
+
+}
+
+
+
